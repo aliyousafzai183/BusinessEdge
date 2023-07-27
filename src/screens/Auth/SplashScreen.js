@@ -1,27 +1,20 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Icon } from 'react-native-elements';
-import colors from '../utils/colors';
+import { View, Image, StyleSheet, StatusBar } from 'react-native';
+import colors from '../../utils/colors';
+import RouteName from '../../routes/RouteName';
 
-const SplashScreen = () => {
-    const navigation = useNavigation();
+const SplashScreen = ({navigation}) => {
 
     useEffect(() => {
         setTimeout(() => {
-            navigation.navigate('NextScreen'); // Replace 'NextScreen' with the screen you want to navigate to.
+            navigation.navigate(RouteName.LOGIN_SCREEN);
         }, 3000);
     }, [navigation]);
 
     return (
         <View style={styles.container}>
-            <Icon 
-                name='rocket'
-                type='font-awesome' 
-                size={50}
-                color={colors.white} 
-            />
-            <Text style={styles.title}>Business Edge</Text>
+            <StatusBar hidden={true} />
+            <Image source={require('../../utils/images/splash.png')} style={styles.Image} />
         </View>
     )
 }
@@ -35,11 +28,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: colors.white,
-        position: 'absolute',
-        bottom: 30,
+    Image: {
+        width:'100%',
+        height:'100%',
+        resizeMode:'contain'
     },
 });

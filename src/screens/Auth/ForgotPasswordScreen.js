@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Input, Button } from 'react-native-elements';
-import colors from '../utils/colors';
+import colors from '../../utils/colors';
 
 const { width, height } = colors;
 
@@ -19,7 +19,7 @@ const ForgotPasswordScreen = () => {
             <Input
                 placeholder='Email'
                 onChangeText={value => setEmail(value)}
-                leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+                leftIcon={{ type: 'font-awesome', name: 'envelope', color: colors.text }}
                 style={styles.input}
             />
             <Button
@@ -34,8 +34,8 @@ const ForgotPasswordScreen = () => {
 export default ForgotPasswordScreen;
 
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
+    container: {
+        flex: 1,
         padding: 20,
         backgroundColor: colors.background,
         alignItems: 'center',
@@ -54,9 +54,10 @@ const styles = StyleSheet.create({
     },
     input: {
         color: colors.text,
-        marginBottom: 20,
     },
     button: {
         backgroundColor: colors.primary,
+        borderRadius:100,
+        width:200
     },
 });

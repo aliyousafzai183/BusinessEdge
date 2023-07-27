@@ -19,35 +19,35 @@ function RootNavigator() {
           name={RouteName.SPLASH_SCREEN}
           component={SplashScreen}
           options={{
-            header: false
+            headerShown: false
           }}
         />
         <Stack.Screen
           name={RouteName.LOGIN_SCREEN}
           component={LoginScreen}
           options={{
-            header: false
+            headerShown: false
           }}
         />
         <Stack.Screen
           name={RouteName.SIGNUP_SCREEN}
           component={SignupScreen}
           options={{
-            header: false
+            headerShown: false
           }}
         />
         <Stack.Screen
           name={RouteName.FORGOT_PASSWORD_SCREEN}
           component={ForgotPasswordScreen}
           options={{
-            header: false
+            headerShown: false
           }}
         />
         <Stack.Screen
           name={RouteName.BOTTOM_TAB}
           component={BottomTab}
           options={{
-            header: false
+            headerShown: false
           }}
         />
 
