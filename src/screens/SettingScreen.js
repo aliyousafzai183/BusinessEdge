@@ -93,7 +93,14 @@ const SettingScreen = ({ navigation }) => {
                         setLoading(true);
                         try {
                             await deleteDocumentAndUser();
-                            logout();
+                            navigation.dispatch(
+                                CommonActions.reset({
+                                    index: 0,
+                                    routes: [
+                                        { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
+                                    ],
+                                })
+                            );
                         } catch (e) {
                             // Handle the error
                         } finally {
