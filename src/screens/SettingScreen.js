@@ -1,38 +1,110 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Alert, TextInput } from 'react-native';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import SettingItem from '../components/SettingItem';
 import RouteName from '../routes/RouteName';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { deleteDocumentAndUser } from '../db/deactivate';
+import { deleteUserSubcollections } from '../db/ResetApp';
 const { width, height } = colors;
 
 const SettingScreen = ({ navigation }) => {
+    const [loading, setLoading] = useState(false);
+
     const logout = async () => {
-        try {
-            await AsyncStorage.removeItem('userId');
-        } catch (e) {
-            // remove error
-        } finally {
-            navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [
-                        { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
-                    ],
-                })
-            );
-        }
+        Alert.alert(
+            "Confirm Logout",
+            "Are you sure you want to log out?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Logout",
+                    onPress: async () => {
+                        setLoading(true);
+                        try {
+                            await AsyncStorage.removeItem('userId');
+                        } catch (e) {
+                            // remove error
+                        } finally {
+                            navigation.dispatch(
+                                CommonActions.reset({
+                                    index: 0,
+                                    routes: [
+                                        { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
+                                    ],
+                                })
+                            );
+                            setLoading(false);
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
 
-    const clearData = () => {
-        // Your clear data logic here
+    const clearData = async () => {
+        setLoading(true);
+        Alert.alert(
+            "Confirm Reset App?",
+            "Are you sure you want to clear all data?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Clear",
+                    onPress: async () => {
+                        setLoading(true);
+                        try {
+                            await deleteUserSubcollections();
+                            navigation.navigate(RouteName.HOME_SCREEN);
+                        } catch (e) {
+                            // remove error
+                        } finally {
+                            setLoading(false);
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
+        setLoading(false);
     };
 
-    const deactivateAccount = () => {
-        // Your deactivate account logic here
+    const deactivateAccount = async () => {
+        Alert.alert(
+            "Deactivate Account ?",
+            "Are you sure that you want to deactivate your account.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Deactivate",
+                    onPress: async () => {
+                        setLoading(true);
+                        try {
+                            await deleteDocumentAndUser();
+                            logout();
+                        } catch (e) {
+                            // Handle the error
+                        } finally {
+                            setLoading(false);
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
+        setLoading(false);
     };
 
     const privacyPolicies = () => {
@@ -54,15 +126,22 @@ const SettingScreen = ({ navigation }) => {
     return (
         <View style={styles.container1}>
             <Header title="Settings" />
-            <View style={styles.container2}>
-                <SettingItem title="Reset App" iconName="trash" onPress={clearData} />
-                <SettingItem title="Rate Us" iconName="star" onPress={rateUs} />
-                <SettingItem title="Privacy Policies" iconName="shield" onPress={privacyPolicies} />
-                <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} />
-                <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
-                <SettingItem title="Logout" iconName="sign-out" onPress={logout} />
-                <SettingItem title="Deactivate Account" iconName="user-times" onPress={deactivateAccount} />
-            </View>
+            {
+                loading ?
+                    <View style={styles.container2}>
+                        <ActivityIndicator color={colors.text} size={'large'} />
+                    </View>
+                    :
+                    <View style={styles.container2}>
+                        <SettingItem title="Reset App" iconName="trash" onPress={clearData} />
+                        <SettingItem title="Rate Us" iconName="star" onPress={rateUs} />
+                        <SettingItem title="Privacy Policies" iconName="shield" onPress={privacyPolicies} />
+                        <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} />
+                        <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
+                        <SettingItem title="Logout" iconName="sign-out" onPress={logout} />
+                        <SettingItem title="Deactivate Account" iconName="user-times" onPress={deactivateAccount} />
+                    </View>
+            }
         </View>
     )
 }

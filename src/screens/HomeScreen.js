@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Modal, TouchableOpacity, Platform, Pressable, Text, ActivityIndicator } from 'react-native';
 import { Input, Icon2 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import colors from '../utils/colors';
 import Header from '../components/Header';
@@ -20,33 +19,25 @@ const HomeScreen = () => {
     const costRef = useRef(null);
     const titleRef = useRef(null);
     const [reports, setReports] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [newReport, setNewReport] = useState({ status: 'Received', cost: '', title: '', date: new Date() });
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        fetchReports();
-    }, [refresh]);
-
-    const fetchReports = async () => {
-        console.log("fetchReports called, start loading...");
-        setLoading(true);  // Start the loading state
-        try {
-            const { reports: fetchedReports, unsubscribe } = await getReports();
-            setReports(fetchedReports);
-            console.log("Data fetched, end loading...");
-
-            if (fetchedReports) {
-                const profit = fetchedReports.reduce((total, report) => {
+        const unsubscribe = getReports((reports) => {
+            setReports(reports || []);
+            setLoading(false);
+            if (reports) {
+                const profit = reports.reduce((total, report) => {
                     if (report.status === 'Received') {
                         return total + parseFloat(report.price);
                     }
                     return total;
                 }, 0);
 
-                const loss = fetchedReports.reduce((total, report) => {
+                const loss = reports.reduce((total, report) => {
                     if (report.status === 'Sent') {
                         return total + parseFloat(report.price);
                     }
@@ -56,24 +47,26 @@ const HomeScreen = () => {
                 setTotalProfit(profit);
                 setTotalLoss(loss);
             }
+        });
 
-            // Do something with unsubscribe if needed...
-        } catch (error) {
-            console.error("Failed to fetch reports:", error);
-            // Handle the error...
-        } finally {
-            setLoading(false);  // End the loading state
-        }
-    };
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, []);
 
-
+    const handleDelete = async (id) => {
+        console.log("Deleting report with id:", id);
+        await deleteReport(id);
+        console.log("Report deleted, triggering fetch...");
+        setRefresh(!refresh); // toggle the `refresh` state to trigger useEffect
+    }
 
     const saveReport = async () => {
         setSaving(true);
         let hasError = false;
 
         // Cost validation
-        if (!newReport.cost || newReport.cost > 1000) {
+        if (!newReport.cost || newReport.cost > 10000) {
             setCostError("Please enter a valid cost (less than 10000).");
             costRef.current.shake();
             hasError = true;
@@ -83,7 +76,7 @@ const HomeScreen = () => {
 
         // Title validation
         const words = newReport.title.split(' ');
-        if (words.length > 4) {
+        if (words.length > 5) {
             setTitleError("Please enter less than 5 words.");
             titleRef.current.shake();
             hasError = true;
@@ -94,19 +87,11 @@ const HomeScreen = () => {
         if (!hasError) {
             const formattedDate = format(newReport.date, 'yyyy-MM-dd'); // Format the date to 'YYYY-MM-DD'
             await addReport(newReport.cost, newReport.title, newReport.status, formattedDate);
-            fetchReports();
+            setNewReport({ status: 'Received', cost: '', title: '', date: new Date() }); // Clear the form inputs after saving
             setModalVisible(false);
         }
         setSaving(false);
     };
-
-    const handleDelete = async (id) => {
-        console.log("Deleting report with id:", id);
-        await deleteReport(id);
-        console.log("Report deleted, triggering fetch...");
-        setRefresh(!refresh); // toggle the `refresh` state to trigger useEffect
-    }
-
 
     return (
         <View style={styles.container1}>
@@ -138,7 +123,7 @@ const HomeScreen = () => {
                             </View>
                 }
 
-
+                {/* The Modal and Add Report Form */}
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -194,13 +179,12 @@ const HomeScreen = () => {
                                 <Icon name="close" size={24} color={colors.text} />
                             </TouchableOpacity>
                         </View>
-
                     </Pressable>
                 </Modal>
             </View>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container1: {

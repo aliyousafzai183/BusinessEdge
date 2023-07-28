@@ -22,19 +22,19 @@ export const addReport = async (price, comments, status, date) => {
     return addDoc(reportsDbRef, reportData);
 };
 
-export const getReports = () => {
-    return new Promise((resolve, reject) => {
-        getReportsDbRef().then(reportsDbRef => {
-            const unsubscribe = onSnapshot(reportsDbRef, (querySnapshot) => {
-                const reports = [];
-                querySnapshot.forEach((documentSnapshot) => {
-                    reports.push({
-                        ...documentSnapshot.data(),
-                        id: documentSnapshot.id,
-                    });
+export const getReports = (callback) => {
+    getReportsDbRef().then(reportsDbRef => {
+        const unsubscribe = onSnapshot(reportsDbRef, (querySnapshot) => {
+            const reports = [];
+            querySnapshot.forEach((documentSnapshot) => {
+                reports.push({
+                    ...documentSnapshot.data(),
+                    id: documentSnapshot.id,
                 });
-                resolve({ reports, unsubscribe }); // Resolve the promise with the reports data and unsubscribe function
-            }, error => reject(error)); // Reject the promise if there's an error
+            });
+            console.log(reports);
+            callback(reports); // Call the callback with the reports data
+            return unsubscribe; // Return the unsubscribe function
         });
     });
 };
