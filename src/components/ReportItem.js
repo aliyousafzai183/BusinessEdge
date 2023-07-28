@@ -1,22 +1,28 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../utils/colors';
+import { deleteReport } from '../db/reportsDb';
 
-const ReportItem = ({ item }) => {
-    const dateString = item.date instanceof Date ? item.date.toDateString() : item.date;
-
+const ReportItem = ({ item, onDelete }) => {
     return (
-        <Pressable style={styles.itemContainer}>
-            <View style={styles.iconBox(item.status)}>
+        <View style={styles.itemContainer}>
+            <View style={styles.iconBox(item?.status)}>
                 <Icon name={item.status === 'Received' ? "arrow-down" : "arrow-up"} size={20} color={colors.white} />
             </View>
             <View style={styles.detailBox}>
-                <Text style={styles.costText}>{item.cost}</Text>
-                <Text style={styles.titleText}>{item.title}</Text>
+                <Text style={styles.costText}>{item?.price}$</Text>
+                {
+                    item.comments && (
+                        <Text style={styles.titleText}>{item.comments}</Text>
+                    )
+                }
             </View>
-            <Text style={styles.dateText}>{dateString}</Text>
-        </Pressable>
+            <TouchableOpacity style={styles.deleteIcon} onPress={() => onDelete(item.id)} >
+                <Icon name="trash" size={20} color={colors.white} />
+            </TouchableOpacity>
+            <Text style={styles.dateText}>{item?.date}</Text>
+        </View>
     )
 };
 
@@ -30,6 +36,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: colors.dimWhite
+    },
+    loadingContainer: {
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     iconBox: status => ({
         width: 40,
@@ -56,6 +66,11 @@ const styles = StyleSheet.create({
         color: colors.white,
         position: 'absolute',
         bottom: 10,
+        right: 10,
+    },
+    deleteIcon: {
+        position: 'absolute',
+        top: 10,
         right: 10,
     },
 });

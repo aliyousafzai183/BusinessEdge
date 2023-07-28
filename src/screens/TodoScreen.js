@@ -4,6 +4,7 @@ import { Input, Icon } from 'react-native-elements';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import TodoItem from '../components/TodoItem';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 
 const TodoScreen = () => {
     const [todos, setTodos] = useState([
@@ -71,16 +72,24 @@ const TodoScreen = () => {
                     </Pressable>
                 </Modal>
 
-                <FlatList
-                    data={todos}
-                    renderItem={({ item, index }) =>
-                        <TodoItem
-                            item={item}
-                            onItemPress={() => handleCheckTodo(index)}
-                        />
-                    }
-                    keyExtractor={(item, index) => index.toString()}
-                />
+                {
+                    todos.length > 0 ?
+                        <FlatList
+                            data={todos}
+                            renderItem={({ item, index }) =>
+                                <TodoItem
+                                    item={item}
+                                    onItemPress={() => handleCheckTodo(index)}
+                                />
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                        /> :
+                        <View style={styles.noTodosContainer}>
+                            <Icon2 name="exclamation-triangle" size={24} color={colors.dimWhite} />
+                            <Text style={styles.noTodosText}>No Todos Found!</Text>
+                        </View>
+                }
+
             </View>
         </View>
     );
@@ -143,7 +152,18 @@ const styles = StyleSheet.create({
     },
     input: {
         color: colors.text
-    }
+    },
+    noTodosContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noTodosText: {
+        marginTop: 10,
+        fontSize: 20,
+        color: colors.dimWhite,
+    },
+
 });
 
 export default TodoScreen;

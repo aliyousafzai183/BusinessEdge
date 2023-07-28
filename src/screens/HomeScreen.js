@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Modal, TouchableOpacity, Platform, Pressable, Text } from 'react-native';
+import { View, FlatList, StyleSheet, Modal, TouchableOpacity, Platform, Pressable, Text, ActivityIndicator } from 'react-native';
 import { Input, Icon2 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,6 +7,8 @@ import { Picker } from '@react-native-picker/picker';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import ReportItem from '../components/ReportItem';
+import { addReport, getReports, deleteReport } from '../db/reportsDb';
+import { format } from 'date-fns';
 
 const { width, height } = colors;
 
@@ -17,36 +19,57 @@ const HomeScreen = () => {
     const [totalLoss, setTotalLoss] = useState(0);
     const costRef = useRef(null);
     const titleRef = useRef(null);
-    const [reports, setReports] = useState([
-        { status: 'Received', cost: '20$', title: 'Some Title 1', date: '2023-07-15' },
-        { status: 'Sent', cost: '30$', title: 'Some Title 2', date: '2023-07-20' },
-        { status: 'Received', cost: '10$', title: 'Some Title 3', date: '2023-07-22' },
-    ]);
-
-    useEffect(() => {
-        const profit = reports.reduce((total, report) => {
-            if (report.status === 'Received') {
-                return total + parseFloat(report.cost);
-            }
-            return total;
-        }, 0);
-
-        const loss = reports.reduce((total, report) => {
-            if (report.status === 'Sent') {
-                return total + parseFloat(report.cost);
-            }
-            return total;
-        }, 0);
-
-        setTotalProfit(profit);
-        setTotalLoss(loss);
-    }, [reports]);
-
-
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [newReport, setNewReport] = useState({ status: 'Received', cost: '', title: '', date: new Date() });
+    const [refresh, setRefresh] = useState(false);
 
-    const saveReport = () => {
+    useEffect(() => {
+        fetchReports();
+    }, [refresh]);
+
+    const fetchReports = async () => {
+        console.log("fetchReports called, start loading...");
+        setLoading(true);  // Start the loading state
+        try {
+            const { reports: fetchedReports, unsubscribe } = await getReports();
+            setReports(fetchedReports);
+            console.log("Data fetched, end loading...");
+
+            if (fetchedReports) {
+                const profit = fetchedReports.reduce((total, report) => {
+                    if (report.status === 'Received') {
+                        return total + parseFloat(report.price);
+                    }
+                    return total;
+                }, 0);
+
+                const loss = fetchedReports.reduce((total, report) => {
+                    if (report.status === 'Sent') {
+                        return total + parseFloat(report.price);
+                    }
+                    return total;
+                }, 0);
+
+                setTotalProfit(profit);
+                setTotalLoss(loss);
+            }
+
+            // Do something with unsubscribe if needed...
+        } catch (error) {
+            console.error("Failed to fetch reports:", error);
+            // Handle the error...
+        } finally {
+            setLoading(false);  // End the loading state
+        }
+    };
+
+
+
+    const saveReport = async () => {
+        setSaving(true);
         let hasError = false;
 
         // Cost validation
@@ -69,10 +92,21 @@ const HomeScreen = () => {
         }
 
         if (!hasError) {
-            setReports([...reports, newReport]);
+            const formattedDate = format(newReport.date, 'yyyy-MM-dd'); // Format the date to 'YYYY-MM-DD'
+            await addReport(newReport.cost, newReport.title, newReport.status, formattedDate);
+            fetchReports();
             setModalVisible(false);
         }
+        setSaving(false);
     };
+
+    const handleDelete = async (id) => {
+        console.log("Deleting report with id:", id);
+        await deleteReport(id);
+        console.log("Report deleted, triggering fetch...");
+        setRefresh(!refresh); // toggle the `refresh` state to trigger useEffect
+    }
+
 
     return (
         <View style={styles.container1}>
@@ -86,12 +120,24 @@ const HomeScreen = () => {
                         <Text style={styles.summaryText}>Total Loss: ${totalLoss}</Text>
                     </View>
                 </View>
-                <FlatList
-                    data={reports}
-                    renderItem={({ item }) => <ReportItem item={item} />}
-                    keyExtractor={item => item.date}
-                    contentContainerStyle={styles.list}
-                />
+
+                {
+                    loading ?
+                        <ActivityIndicator size="large" color={colors.text} />  // Or some other loading component
+                        :
+                        reports.length > 0 ?
+                            <FlatList
+                                data={reports}
+                                renderItem={({ item }) => <ReportItem key={item.id} item={item} onDelete={handleDelete} />}
+                                keyExtractor={item => item.id}
+                                contentContainerStyle={styles.list}
+                            /> :
+                            <View style={styles.noReportsContainer}>
+                                <Icon name="exclamation-triangle" size={24} color={colors.dimWhite} />
+                                <Text style={styles.noReportsText}>No Reports Found!</Text>
+                            </View>
+                }
+
 
                 <Modal
                     animationType="slide"
@@ -104,6 +150,19 @@ const HomeScreen = () => {
                         onPress={() => { setModalVisible(false) }}
                     >
                         <View style={styles.modalView}>
+                            <Picker
+                                selectedValue={newReport.status}
+                                onValueChange={(itemValue, itemIndex) => setNewReport({ ...newReport, status: itemValue })}
+                            >
+                                <Picker.Item label="Received" value="Received" />
+                                <Picker.Item label="Sent" value="Sent" />
+                            </Picker>
+                            {Platform.OS === 'ios' && <DateTimePicker
+                                value={newReport.date}
+                                mode={'date'}
+                                display="default"
+                                onChange={(event, selectedDate) => setNewReport({ ...newReport, date: selectedDate })}
+                            />}
                             <Input
                                 ref={costRef}
                                 leftIcon={<Icon name="dollar" size={24} color={colors.dimWhite} />}
@@ -123,21 +182,13 @@ const HomeScreen = () => {
                                 errorMessage={titleError}
                                 errorStyle={{ color: 'red' }}
                             />
-                            <Picker
-                                selectedValue={newReport.status}
-                                onValueChange={(itemValue, itemIndex) => setNewReport({ ...newReport, status: itemValue })}
-                            >
-                                <Picker.Item label="Received" value="Received" />
-                                <Picker.Item label="Sent" value="Sent" />
-                            </Picker>
-                            {Platform.OS === 'ios' && <DateTimePicker
-                                value={newReport.date}
-                                mode={'date'}
-                                display="default"
-                                onChange={(event, selectedDate) => setNewReport({ ...newReport, date: selectedDate })}
-                            />}
                             <TouchableOpacity style={styles.addButton} onPress={saveReport}>
-                                <Text style={styles.addButtonText}>Add Todo</Text>
+                                {
+                                    saving ?
+                                        <ActivityIndicator color={colors.white} size={'small'} />
+                                        :
+                                        <Text style={styles.addButtonText}>Add Report</Text>
+                                }
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.cancelButton} onPress={() => { setModalVisible(false) }}>
                                 <Icon name="close" size={24} color={colors.text} />
@@ -217,6 +268,17 @@ const styles = StyleSheet.create({
         top: '5%',
         right: '5%'
     },
+    noReportsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noReportsText: {
+        marginTop: 10,
+        fontSize: 20,
+        color: colors.dimWhite,
+    },
+
 });
 
 export default HomeScreen;

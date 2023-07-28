@@ -4,6 +4,7 @@ import { Input, Icon } from 'react-native-elements';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import ContactItem from '../components/ContactItem';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 
 const ContactScreen = () => {
     const [contacts, setContacts] = useState([]);
@@ -101,16 +102,24 @@ const ContactScreen = () => {
                     </Pressable>
                 </Modal>
 
-                <FlatList
-                    data={contacts}
-                    renderItem={({ item, index }) =>
-                        <ContactItem
-                            item={item}
-                            onEdit={() => handleEditContact(index)}
-                            onDelete={() => handleDeleteContact(index)}
-                        />}
-                    keyExtractor={(item, index) => index.toString()}
-                />
+                {
+                    contacts.length > 0 ?
+                        <FlatList
+                            data={contacts}
+                            renderItem={({ item, index }) =>
+                                <ContactItem
+                                    item={item}
+                                    onEdit={() => handleEditContact(index)}
+                                    onDelete={() => handleDeleteContact(index)}
+                                />}
+                            keyExtractor={(item, index) => index.toString()}
+                        /> :
+                        <View style={styles.noContactsContainer}>
+                            <Icon2 name="address-book-o" size={24} color={colors.dimWhite} />
+                            <Text style={styles.noContactsText}>No Contacts Found!</Text>
+                        </View>
+                }
+
 
             </View>
         </View>
@@ -161,7 +170,18 @@ const styles = StyleSheet.create({
     },
     input: {
         color: colors.text
-    }
+    },
+    noContactsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noContactsText: {
+        marginTop: 10,
+        fontSize: 20,
+        color: colors.dimWhite,
+    },
+
 });
 
 export default ContactScreen;
