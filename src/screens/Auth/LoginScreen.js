@@ -16,7 +16,6 @@ const LoginScreen = ({ navigation }) => {
     const [passwordError, setPasswordError] = useState("");
 
     const handleLogin = () => {
-        // Reset error messages
         setEmailError('');
         setPasswordError('');
 
@@ -31,7 +30,7 @@ const LoginScreen = ({ navigation }) => {
         //     passwordRef.current.shake();
         //     setPasswordError('Password should be at least 6 characters');
         // }
-        
+
         navigation.navigate(RouteName.BOTTOM_TAB);
 
     }
@@ -48,8 +47,8 @@ const LoginScreen = ({ navigation }) => {
                 placeholder='Email'
                 onChangeText={value => setEmail(value)}
                 leftIcon={<Icon name="user" size={24} color={colors.text} />}
-                placeholderTextColor={colors.text}
-                inputContainerStyle={styles.input}
+                placeholderTextColor={colors.dimWhite}
+                style={styles.input}
                 errorMessage={emailError}
                 errorStyle={{ color: colors.text }}
             />
@@ -59,23 +58,29 @@ const LoginScreen = ({ navigation }) => {
                 placeholder='Password'
                 onChangeText={value => setPassword(value)}
                 secureTextEntry={secureTextEntry}
+                placeholderTextColor={colors.dimWhite}
                 leftIcon={<Icon name="lock" size={24} color={colors.text} />}
-                rightIcon={
+                rightIcon={password.length > 0 &&
                     <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
                         <Icon name={secureTextEntry ? 'eye-slash' : 'eye'} size={24} color={colors.text} />
                     </TouchableOpacity>
                 }
-                inputContainerStyle={styles.input}
-                placeholderTextColor={colors.text}
+                style={styles.input}
                 errorMessage={passwordError}
                 errorStyle={{ color: colors.text }}
             />
 
-            <View style={styles.checkboxContainer}>
-                <TouchableOpacity style={styles.checkbox} onPress={() => setRememberMe(!rememberMe)}>
-                    <Text style={styles.checkboxText}>{rememberMe ? '✔️' : '⬜️'}</Text>
+            <View style={styles.rememberForgotContainer}>
+                <View style={styles.checkboxContainer}>
+                    <TouchableOpacity style={styles.checkbox} onPress={() => setRememberMe(!rememberMe)}>
+                        <Text style={styles.checkboxText}>{rememberMe ? '✔️' : '⬜️'}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.label}>Remember me</Text>
+                </View>
+
+                <TouchableOpacity onPress={() => { navigation.navigate(RouteName.FORGOT_PASSWORD_SCREEN) }}>
+                    <Text style={styles.forgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <Text style={styles.label}>Remember me</Text>
             </View>
 
             <Button
@@ -84,12 +89,8 @@ const LoginScreen = ({ navigation }) => {
                 buttonStyle={styles.button}
             />
 
-            <TouchableOpacity onPress={() => { navigation.navigate(RouteName.FORGOT_PASSWORD_SCREEN) }}>
-                <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-
             <Text style={styles.signup}>Don't have an account?
-                <Text style={styles.signupLink} onPress={() => { navigation.navigate(RouteName.SIGNUP_SCREEN) }}> SignUp Now!</Text>
+                <Text style={styles.signupLink} onPress={() => { navigation.navigate(RouteName.SIGNUP_SCREEN) }}> Register Now!</Text>
             </Text>
         </View>
     )
@@ -120,6 +121,13 @@ const styles = StyleSheet.create({
     input: {
         color: colors.text,
     },
+    rememberForgotContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 20,
+        alignItems: 'center'
+    },
     checkboxContainer: {
         flexDirection: "row",
         marginBottom: 20,
@@ -131,6 +139,9 @@ const styles = StyleSheet.create({
     label: {
         margin: 8,
         color: colors.white,
+    },
+    checkboxText: {
+        color: colors.secondary
     },
     button: {
         backgroundColor: colors.primary,

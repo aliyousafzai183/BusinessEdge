@@ -7,6 +7,7 @@ import {
 } from '../screens/index';
 import BottomTab from './BottomTab';
 import RouteName from './RouteName';
+import colors from '../utils/colors';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,7 +41,11 @@ function RootNavigator() {
           name={RouteName.FORGOT_PASSWORD_SCREEN}
           component={ForgotPasswordScreen}
           options={{
-            headerShown: false
+              headerTitle: 'Reset Password',
+              headerStyle:{
+                backgroundColor: colors.background
+              },
+              headerTintColor: colors.text
           }}
         />
         <Stack.Screen

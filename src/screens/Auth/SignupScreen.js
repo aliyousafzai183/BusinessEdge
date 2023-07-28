@@ -42,7 +42,7 @@ const SignupScreen = ({ navigation }) => {
                 placeholder='Email'
                 onChangeText={value => setEmail(value)}
                 leftIcon={<Icon name="user" size={24} color={colors.text} />}
-                placeholderTextColor={colors.text}
+                placeholderTextColor={colors.dimWhite}
                 inputStyle={styles.input}
                 errorMessage={emailError}
                 errorStyle={{ color: colors.text }}
@@ -55,12 +55,13 @@ const SignupScreen = ({ navigation }) => {
                 secureTextEntry={secureTextEntry}
                 leftIcon={<Icon name="lock" size={24} color={colors.text} />}
                 rightIcon={
+                    password.length > 0 &&
                     <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
                         <Icon name={secureTextEntry ? 'eye-slash' : 'eye'} size={24} color={colors.text} />
                     </TouchableOpacity>
                 }
                 inputStyle={styles.input}
-                placeholderTextColor={colors.text}
+                placeholderTextColor={colors.dimWhite}
                 errorMessage={passwordError}
                 errorStyle={{ color: colors.text }}
             />
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: colors.height * 0.2,
-        flexWrap:'wrap'
+        flexWrap: 'wrap'
     },
     tos: {
         color: colors.white,
