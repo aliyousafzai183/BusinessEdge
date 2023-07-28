@@ -17,7 +17,7 @@ const Header = ({ title, onAddPressed }) => {
                 return 'gear';
             case 'Profit & Loss Report':
             case 'Business Todo':
-            case 'Important Contacts':
+            case 'Business Contacts':
                 return 'plus-square-o';
             default:
                 return null;

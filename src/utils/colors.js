@@ -11,7 +11,8 @@ const colors = {
     black: '#000000',
     height: height,
     width: width,
-    dimWhite:'#B3B3B3'
+    dimWhite:'#B3B3B3',
+    dimBlack: 'rgba(0,0,0,0.5)'
     
 }
 

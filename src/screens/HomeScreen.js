@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { View, FlatList, StyleSheet, Modal, Button, Platform } from 'react-native';
-import { Input } from 'react-native-elements';
+import { View, FlatList, StyleSheet, Modal, TouchableOpacity, Platform, Pressable, Text } from 'react-native';
+import { Input, Icon2 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
@@ -70,41 +70,52 @@ const HomeScreen = () => {
                     visible={modalVisible}
                     onRequestClose={() => setModalVisible(false)}
                 >
-                    <View style={styles.modalView}>
-                        <Input
-                            ref={costRef}
-                            leftIcon={<Icon name="dollar" size={24} color={colors.dimWhite} />}
-                            onChangeText={cost => setNewReport({ ...newReport, cost })}
-                            placeholder="Price"
-                            keyboardType="numeric"
-                            style={styles.input}
-                            errorMessage={costError}
-                            errorStyle={{ color: 'red' }}
-                        />
-                        <Input
-                            ref={titleRef}
-                            leftIcon={<Icon name="comment" size={24} color={colors.dimWhite} />}
-                            onChangeText={title => setNewReport({ ...newReport, title })}
-                            placeholder="Comments"
-                            style={styles.input}
-                            errorMessage={titleError}
-                            errorStyle={{ color: 'red' }}
-                        />
-                        <Picker
-                            selectedValue={newReport.status}
-                            onValueChange={(itemValue, itemIndex) => setNewReport({ ...newReport, status: itemValue })}
-                        >
-                            <Picker.Item label="Received" value="Received" />
-                            <Picker.Item label="Sent" value="Sent" />
-                        </Picker>
-                        {Platform.OS === 'ios' && <DateTimePicker
-                            value={newReport.date}
-                            mode={'date'}
-                            display="default"
-                            onChange={(event, selectedDate) => setNewReport({ ...newReport, date: selectedDate })}
-                        />}
-                        <Button title="Save" onPress={saveReport} />
-                    </View>
+                    <Pressable
+                        style={styles.modalContiner}
+                        onPress={() => { setModalVisible(false) }}
+                    >
+                        <View style={styles.modalView}>
+                            <Input
+                                ref={costRef}
+                                leftIcon={<Icon name="dollar" size={24} color={colors.dimWhite} />}
+                                onChangeText={cost => setNewReport({ ...newReport, cost })}
+                                placeholder="Price"
+                                keyboardType="numeric"
+                                style={styles.input}
+                                errorMessage={costError}
+                                errorStyle={{ color: 'red' }}
+                            />
+                            <Input
+                                ref={titleRef}
+                                leftIcon={<Icon name="comment" size={24} color={colors.dimWhite} />}
+                                onChangeText={title => setNewReport({ ...newReport, title })}
+                                placeholder="Comments"
+                                style={styles.input}
+                                errorMessage={titleError}
+                                errorStyle={{ color: 'red' }}
+                            />
+                            <Picker
+                                selectedValue={newReport.status}
+                                onValueChange={(itemValue, itemIndex) => setNewReport({ ...newReport, status: itemValue })}
+                            >
+                                <Picker.Item label="Received" value="Received" />
+                                <Picker.Item label="Sent" value="Sent" />
+                            </Picker>
+                            {Platform.OS === 'ios' && <DateTimePicker
+                                value={newReport.date}
+                                mode={'date'}
+                                display="default"
+                                onChange={(event, selectedDate) => setNewReport({ ...newReport, date: selectedDate })}
+                            />}
+                            <TouchableOpacity style={styles.addButton} onPress={saveReport}>
+                                <Text style={styles.addButtonText}>Add Todo</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => { setModalVisible(false) }}>
+                                <Icon name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                    </Pressable>
                 </Modal>
             </View>
         </View>
@@ -119,18 +130,41 @@ const styles = StyleSheet.create({
     container2: {
         flex: 1,
         backgroundColor: colors.background,
-        borderRadius: 30,
+        borderRadius: 20,
     },
 
-    modalView: {
+    modalContiner: {
         flex: 1,
+        backgroundColor: colors.dimBlack,
+        justifyContent: 'flex-end'
+    },
+    modalView: {
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
         backgroundColor: colors.background,
         padding: 20,
-        borderRadius: 30,
-        marginTop: '14%',
+        height: '50%',
+        justifyContent: 'space-around',
     },
     input: {
         color: colors.text,
+    },
+    addButton: {
+        width: '100%',
+        height: 40,
+        backgroundColor: colors.primary,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    addButtonText: {
+        color: colors.text,
+        fontSize: 16,
+    },
+    cancelButton: {
+        position: 'absolute',
+        top: '5%',
+        right: '5%'
     },
 });
 
