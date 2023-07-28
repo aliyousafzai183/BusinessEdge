@@ -8,6 +8,7 @@ const RouteName = {
     SIGNUP_SCREEN: 'SIGNUP_SCREEN',
     SPLASH_SCREEN: 'SPLASH_SCREEN',
     BOTTOM_TAB: 'BOTTOM_TAB',
+    USER_NAME: 'USER_NAME',
 }
 
 export default RouteName;

@@ -35,7 +35,7 @@ const SettingScreen = ({ navigation }) => {
                                 CommonActions.reset({
                                     index: 0,
                                     routes: [
-                                        { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
+                                        { name: RouteName.USER_NAME }, // Replace with your login screen route name
                                     ],
                                 })
                             );
@@ -97,7 +97,7 @@ const SettingScreen = ({ navigation }) => {
                                 CommonActions.reset({
                                     index: 0,
                                     routes: [
-                                        { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
+                                        { name: RouteName.USER_NAME }, // Replace with your login screen route name
                                     ],
                                 })
                             );

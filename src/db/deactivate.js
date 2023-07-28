@@ -7,8 +7,8 @@ const USERS_COLLECTION = 'users';
 export const deleteDocumentAndUser = async () => {
     try {
         // Step 2: Delete the user from Firebase Auth
-        await auth.currentUser.delete();
-        console.log('User deleted from Firebase Auth successfully');
+        // await auth.currentUser.delete();
+        // console.log('User deleted from Firebase Auth successfully');
 
         const userId = await AsyncStorage.getItem('userId');
         // Step 1: Delete the document from the collection

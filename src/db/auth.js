@@ -143,6 +143,42 @@ export const handleForgotPassword = async (email, navigation, setActivity) => {
             console.log(errorMessage);
             ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
             setActivity(false);
-
         });
+};
+
+export const createUser = (username, navigation, setActivity) => {
+    setActivity(true);
+    if (username.length < 5 || username.length > 40) {
+        ShowToast("User Name should be between 5 & 40 characters long.");
+        console.log("Wrong Password");
+        setActivity(false);
+        return;
+    }
+
+    // Create a document in the "users" collection with default fields
+    const userRef = doc(db, "users", username);
+    setDoc(userRef, {
+        username: username
+    })
+        .then(() => {
+            saveUserIdToAsyncStorage(username); // Save the userId to AsyncStorage
+
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0, // This is the index of the screen that you want to reset to (MAINHomeScreen)
+                    routes: [
+                        { name: RouteName.BOTTOM_TAB }, // Replace RouteName.MAIN_HOME_SCREEN with the actual name of your MAINHomeScreen route
+                    ],
+                })
+            );
+        })
+        .catch((error) => {
+            const errorMessage = error.message;
+            ShowToast(errorMessage);
+            console.log(errorMessage);
+        })
+        .finally(() => {
+            setActivity(false);
+        });
+
 };

@@ -18,7 +18,7 @@ const SplashScreen = ({ navigation }) => {
             if (userId) {
                 navigation.navigate(RouteName.BOTTOM_TAB);
             } else {
-                navigation.navigate(RouteName.LOGIN_SCREEN);
+                navigation.navigate(RouteName.USER_NAME);
             }
         } catch (error) {
             console.log(error.message);

@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   SplashScreen, LoginScreen,
-  SignupScreen, ForgotPasswordScreen
+  SignupScreen, ForgotPasswordScreen, UserName
 } from '../screens/index';
 import BottomTab from './BottomTab';
 import RouteName from './RouteName';
@@ -33,6 +33,13 @@ function RootNavigator() {
         <Stack.Screen
           name={RouteName.SIGNUP_SCREEN}
           component={SignupScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={RouteName.USER_NAME}
+          component={UserName}
           options={{
             headerShown: false
           }}
