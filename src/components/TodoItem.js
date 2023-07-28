@@ -6,7 +6,7 @@ import colors from '../utils/colors';
 const TodoItem = ({ item, onItemPress }) => {
     return (
         <TouchableOpacity style={styles.todo} onPress={onItemPress}>
-            <Icon name={item.completed ? 'check-circle' : 'circle-thin'} size={20} color={colors.text} />
+            <Icon name={'circle-thin'} size={20} color={colors.text} />
             <Text style={styles.todoText}>{item.text}</Text>
         </TouchableOpacity>
     );

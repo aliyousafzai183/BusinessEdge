@@ -1,39 +1,52 @@
-import React, { useState, useRef } from 'react';
-import { View, StyleSheet, FlatList, Modal, TouchableOpacity, Text, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, FlatList, Modal, TouchableOpacity, Text, Pressable, ActivityIndicator } from 'react-native';
 import { Input, Icon } from 'react-native-elements';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import TodoItem from '../components/TodoItem';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
+import { addTodos, getTodos, deleteTodo } from '../db/todosDb';
 
 const TodoScreen = () => {
-    const [todos, setTodos] = useState([
-        { text: 'Learn React Native', completed: false },
-        { text: 'Workout', completed: false },
-        { text: 'Finish project', completed: true },
-    ]);
+    const [todos, setTodos] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [newTodo, setNewTodo] = useState('');
     const [todoError, setTodoError] = useState(null);
     const inputRef = useRef(null);
+    const [loading, setLoading] = useState(true);
+    const [adding, setAdding] = useState(false);
+    const [unsubscribe, setUnsubscribe] = useState(null);
 
-    const handleAddTodo = () => {
+    const handleAddTodo = async () => {
+        setAdding(true);
         if (newTodo === '') {
             setTodoError('Todo cannot be empty');
             inputRef.current.shake();
             return;
         }
-        setTodos([...todos, { text: newTodo, completed: false }]);
+        await addTodos(newTodo);
         setModalVisible(false);
         setNewTodo('');
         setTodoError(null);
+        setAdding(false);
     };
 
-    const handleCheckTodo = (index) => {
-        let newTodos = [...todos];
-        newTodos[index].completed = !newTodos[index].completed;
-        setTodos(newTodos);
+    const handleCheckTodo = async (index) => {
+        await deleteTodo(todos[index].id);
     };
+
+    useEffect(() => {
+        const unsubscribe = getTodos((reports) => {
+            setTodos(reports || []);
+            setLoading(false);
+        });
+
+        return () => {
+            if (unsubscribe) unsubscribe(); // Call the unsubscribe function when component is unmounted
+        };
+    }, []);
+
+
 
     return (
         <View style={styles.container1}>
@@ -63,7 +76,12 @@ const TodoScreen = () => {
                                 style={styles.input}
                             />
                             <TouchableOpacity style={styles.addButton} onPress={handleAddTodo}>
-                                <Text style={styles.addButtonText}>Add Todo</Text>
+                                {
+                                    adding ?
+                                        <ActivityIndicator color={colors.text} size={'small'} />
+                                        :
+                                        <Text style={styles.addButtonText}>Add Todo</Text>
+                                }
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.cancelButton} onPress={() => { setModalVisible(false) }}>
                                 <Icon name="close" size={24} color={colors.text} />
@@ -73,21 +91,25 @@ const TodoScreen = () => {
                 </Modal>
 
                 {
-                    todos.length > 0 ?
-                        <FlatList
-                            data={todos}
-                            renderItem={({ item, index }) =>
-                                <TodoItem
-                                    item={item}
-                                    onItemPress={() => handleCheckTodo(index)}
-                                />
-                            }
-                            keyExtractor={(item, index) => index.toString()}
-                        /> :
-                        <View style={styles.noTodosContainer}>
-                            <Icon2 name="exclamation-triangle" size={24} color={colors.dimWhite} />
-                            <Text style={styles.noTodosText}>No Todos Found!</Text>
-                        </View>
+                    loading ?
+                        <ActivityIndicator size="large" color={colors.primary} />
+
+                        :
+                        todos.length > 0 ?
+                            <FlatList
+                                data={todos}
+                                renderItem={({ item, index }) =>
+                                    <TodoItem
+                                        item={item}
+                                        onItemPress={() => handleCheckTodo(index)}
+                                    />
+                                }
+                                keyExtractor={(item, index) => index.toString()}
+                            /> :
+                            <View style={styles.noTodosContainer}>
+                                <Icon2 name="exclamation-triangle" size={24} color={colors.dimWhite} />
+                                <Text style={styles.noTodosText}>No Todos Found!</Text>
+                            </View>
                 }
 
             </View>
