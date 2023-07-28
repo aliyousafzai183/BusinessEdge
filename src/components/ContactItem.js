@@ -7,10 +7,10 @@ const ContactItem = ({ item, onEdit, onDelete }) => (
     <View style={styles.contactItem}>
         <Text style={styles.contactNumber}>{item.number}</Text>
         <View style={styles.subContainer}>
-            <TouchableOpacity style={styles.editIcon} onPress={onEdit}>
+            {/* <TouchableOpacity style={styles.editIcon} onPress={onEdit}>
                 <Icon name="edit" size={24} color={colors.secondary} />
-            </TouchableOpacity>
-            <Text style={styles.contactName}>  |  {item.name}  |  </Text>
+            </TouchableOpacity> */}
+            <Text style={styles.contactName}>{item.name}  |  </Text>
             <TouchableOpacity style={styles.deleteIcon} onPress={onDelete}>
                 <Icon name="delete" size={24} color={colors.primary} />
             </TouchableOpacity>

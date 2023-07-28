@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     todoText: {
         marginLeft: 10,
         fontSize: 16,
+        color: colors.text
     },
 });
 

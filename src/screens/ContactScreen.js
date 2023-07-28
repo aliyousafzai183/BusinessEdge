@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Text, FlatList, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Modal, TouchableOpacity, Text, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import { Input, Icon } from 'react-native-elements';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import ContactItem from '../components/ContactItem';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
+import { addContact, getContacts, deleteContact, editContact } from '../db/contactsDb';
 
 const ContactScreen = () => {
     const [contacts, setContacts] = useState([]);
@@ -12,14 +13,16 @@ const ContactScreen = () => {
     const [newContact, setNewContact] = useState({ name: '', number: '' });
     const [contactError, setContactError] = useState(null);
     const [nameError, setNameError] = useState(null);
-    const [editIndex, setEditIndex] = useState(null);
     const nameInputRef = useRef(null); // reference for the name input
     const numberInputRef = useRef(null); // reference for the number input
+    const [loading, setLoading] = useState(true);
+    const [adding, setAdding] = useState(false);
 
-    const handleAddContact = () => {
+    const handleAddContact = async () => {
+        setAdding(true);
         let hasError = false;
-        if (newContact.name.trim().length === 0 && newContact.name.trim().length < 20) {
-            setNameError('Contact name cannot be empty or large.');
+        if (newContact.name.trim().length === 0 && newContact.name.trim().length < 15) {
+            setNameError('Contact name should be between 5 and 20 characters.');
             nameInputRef.current.shake();
             hasError = true;
         } else {
@@ -35,30 +38,27 @@ const ContactScreen = () => {
         }
 
         if (!hasError) {
-            if (editIndex !== null) {
-                const updatedContacts = [...contacts];
-                updatedContacts[editIndex] = newContact;
-                setContacts(updatedContacts);
-                setEditIndex(null);
-            } else {
-                setContacts([...contacts, newContact]);
-            }
+            await addContact(newContact.name, newContact.number);
             setNewContact({ name: '', number: '' });
             setModalVisible(false);
         }
+        setAdding(false);
     };
 
-    const handleEditContact = index => {
-        setNewContact(contacts[index]);
-        setEditIndex(index);
-        setModalVisible(true);
+    const handleDeleteContact = async (index) => {
+        await deleteContact(contacts[index].id);
     };
 
-    const handleDeleteContact = index => {
-        const updatedContacts = [...contacts];
-        updatedContacts.splice(index, 1);
-        setContacts(updatedContacts);
-    };
+    useEffect(() => {
+        const unsubscribe = getContacts((reports) => {
+            setContacts(reports || []);
+            setLoading(false);
+        });
+
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, []);
 
     return (
         <View style={styles.container1}>
@@ -93,7 +93,12 @@ const ContactScreen = () => {
                                 style={styles.input}
                             />
                             <TouchableOpacity style={styles.addButton} onPress={handleAddContact}>
-                                <Text style={styles.addButtonText}>Add Contact</Text>
+                                {
+                                    adding ?
+                                        <ActivityIndicator color={colors.text} size={'small'} />
+                                        :
+                                        <Text style={styles.addButtonText}>Add Contact</Text>
+                                }
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.cancelButton} onPress={() => { setModalVisible(false) }}>
                                 <Icon name="close" size={24} color={colors.text} />
