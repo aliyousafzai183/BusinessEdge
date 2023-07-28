@@ -5,13 +5,14 @@ import Header from '../components/Header';
 import SettingItem from '../components/SettingItem';
 import RouteName from '../routes/RouteName';
 import { CommonActions } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = colors;
 
 const SettingScreen = ({ navigation }) => {
     const logout = async () => {
         try {
-            await AsyncStorage.removeItem('userId')
+            await AsyncStorage.removeItem('userId');
         } catch (e) {
             // remove error
         } finally {
