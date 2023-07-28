@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StatusBar, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StatusBar, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../utils/colors';
 import RouteName from '../../routes/RouteName';
+import { SignIn } from '../../db/auth';
 
 const LoginScreen = ({ navigation }) => {
     const emailRef = useRef();
@@ -14,24 +15,34 @@ const LoginScreen = ({ navigation }) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [activity, setActivity] = useState(false);
 
     const handleLogin = () => {
+        let hasError = false;
         setEmailError('');
         setPasswordError('');
 
-        // // Validate email
-        // if (email === "" || !email.includes('@')) {
-        //     emailRef.current.shake();
-        //     setEmailError('Enter a valid email');
-        // }
+        // Validate email
+        if (email === "" || !email.includes('@')) {
+            emailRef.current.shake();
+            setEmailError('Enter a valid email');
+            hasError = true;
+        } else {
+            setEmailError("");
+        }
 
-        // // Validate password
-        // if (password === "" || password.length < 6) {
-        //     passwordRef.current.shake();
-        //     setPasswordError('Password should be at least 6 characters');
-        // }
+        // Validate password
+        if (password === "" || password.length < 6) {
+            passwordRef.current.shake();
+            setPasswordError('Password should be at least 6 characters');
+            hasError = true;
+        } else {
+            setPasswordError("");
+        }
 
-        navigation.navigate(RouteName.BOTTOM_TAB);
+        if (!hasError) {
+            SignIn(email, password, navigation, setActivity);
+        }
 
     }
 
@@ -71,23 +82,29 @@ const LoginScreen = ({ navigation }) => {
             />
 
             <View style={styles.rememberForgotContainer}>
-                <View style={styles.checkboxContainer}>
+                {/* <View style={styles.checkboxContainer}>
                     <TouchableOpacity style={styles.checkbox} onPress={() => setRememberMe(!rememberMe)}>
                         <Text style={styles.checkboxText}>{rememberMe ? '✔️' : '⬜️'}</Text>
                     </TouchableOpacity>
                     <Text style={styles.label}>Remember me</Text>
-                </View>
+                </View> */}
 
                 <TouchableOpacity onPress={() => { navigation.navigate(RouteName.FORGOT_PASSWORD_SCREEN) }}>
                     <Text style={styles.forgotPassword}>Forgot Password?</Text>
                 </TouchableOpacity>
             </View>
 
-            <Button
-                title="Login"
-                onPress={handleLogin}
-                buttonStyle={styles.button}
-            />
+            {
+                activity ?
+                    <ActivityIndicator color={colors.white} size={'small'} />
+                    :
+
+                    <Button
+                        title={"Login"}
+                        onPress={handleLogin}
+                        buttonStyle={styles.button}
+                    ></Button>
+            }
 
             <Text style={styles.signup}>Don't have an account?
                 <Text style={styles.signupLink} onPress={() => { navigation.navigate(RouteName.SIGNUP_SCREEN) }}> Register Now!</Text>

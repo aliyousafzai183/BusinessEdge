@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import colors from '../../utils/colors';
 import RouteName from '../../routes/RouteName';
+import { SignUp } from '../../db/auth';
 
 const SignupScreen = ({ navigation }) => {
     const emailRef = useRef();
@@ -13,22 +14,32 @@ const SignupScreen = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [secureTextEntry, setSecureTextEntry] = useState(true);
+    const [activity, setActivity] = useState(false);
 
     const handleSignup = () => {
+        let hasError = false;
         setEmailError('');
         setPasswordError('');
 
-        // if (email === "" || !email.includes('@')) {
-        //     emailRef.current.shake();
-        //     setEmailError('Enter a valid email');
-        // }
+        if (email === "" || !email.includes('@')) {
+            emailRef.current.shake();
+            setEmailError('Enter a valid email');
+            hasError = true;
+        } else {
+            setEmailError("");
+        }
 
-        // if (password === "" || password.length < 6) {
-        //     passwordRef.current.shake();
-        //     setPasswordError('Password should be at least 6 characters');
-        // }
+        if (password === "" || password.length < 6) {
+            passwordRef.current.shake();
+            setPasswordError('Password should be at least 6 characters');
+            hasError = true;
+        } else {
+            setPasswordError("");
+        }
 
-        navigation.navigate(RouteName.LOGIN_SCREEN);
+        if (!hasError) {
+            SignUp(email, password, navigation, setActivity);
+        }
 
     }
 
@@ -66,11 +77,17 @@ const SignupScreen = ({ navigation }) => {
                 errorStyle={{ color: colors.text }}
             />
 
-            <Button
-                title="Signup"
-                onPress={handleSignup}
-                buttonStyle={styles.button}
-            />
+            {
+                activity ?
+                    <ActivityIndicator color={colors.white} size={'small'} />
+                    :
+
+                    <Button
+                        title={"Signup"}
+                        onPress={handleSignup}
+                        buttonStyle={styles.button}
+                    ></Button>
+            }
 
 
             <Text style={styles.alreadyAccount}>Already have an account?

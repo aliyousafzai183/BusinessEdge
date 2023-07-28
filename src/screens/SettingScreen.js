@@ -9,15 +9,21 @@ import { CommonActions } from '@react-navigation/native';
 const { width, height } = colors;
 
 const SettingScreen = ({ navigation }) => {
-    const logout = () => {
-        navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes: [
-                    { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
-                ],
-            })
-        );
+    const logout = async () => {
+        try {
+            await AsyncStorage.removeItem('userId')
+        } catch (e) {
+            // remove error
+        } finally {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [
+                        { name: RouteName.LOGIN_SCREEN }, // Replace with your login screen route name
+                    ],
+                })
+            );
+        }
     };
 
     const clearData = () => {

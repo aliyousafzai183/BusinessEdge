@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import colors from '../../utils/colors';
+import { handleForgotPassword } from '../../db/auth';
 
 const { width, height } = colors;
 
-const ForgotPasswordScreen = () => {
+const ForgotPasswordScreen = ({ navigation }) => {
     const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [activity, setActivity] = useState(false);
+
+    const inputRef = useRef();
 
     const handleContinue = () => {
-        // Handle password reset logic here
+        if (email === "" || !email.includes('@')) {
+            setEmailError('Enter a valid email');
+            inputRef.current.shake();
+        } else {
+            setEmailError("");
+            handleForgotPassword(email, navigation, setActivity);
+        }
     }
 
     return (
@@ -17,16 +28,24 @@ const ForgotPasswordScreen = () => {
             <Text style={styles.title}>Business Edge</Text>
             <Text style={styles.text}>Please enter your email address to reset your password.</Text>
             <Input
+                ref={inputRef}
                 placeholder='Email'
                 onChangeText={value => setEmail(value)}
+                errorMessage={emailError}
                 leftIcon={{ type: 'font-awesome', name: 'envelope', color: colors.text }}
                 style={styles.input}
             />
-            <Button
-                title="Continue"
-                onPress={handleContinue}
-                buttonStyle={styles.button}
-            />
+            {
+                activity ?
+                    <ActivityIndicator color={colors.white} size={'small'} />
+                    :
+
+                    <Button
+                        title={"Continue"}
+                        onPress={handleContinue}
+                        buttonStyle={styles.button}
+                    ></Button>
+            }
         </View>
     )
 }
@@ -57,7 +76,7 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: colors.primary,
-        borderRadius:100,
-        width:200
+        borderRadius: 100,
+        width: 200
     },
 });
