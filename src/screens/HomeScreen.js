@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Modal, TouchableOpacity, Platform, Pressable, Text } from 'react-native';
 import { Input, Icon2 } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,14 +13,35 @@ const { width, height } = colors;
 const HomeScreen = () => {
     const [costError, setCostError] = useState("");
     const [titleError, setTitleError] = useState("");
+    const [totalProfit, setTotalProfit] = useState(0);
+    const [totalLoss, setTotalLoss] = useState(0);
     const costRef = useRef(null);
     const titleRef = useRef(null);
-
     const [reports, setReports] = useState([
         { status: 'Received', cost: '20$', title: 'Some Title 1', date: '2023-07-15' },
         { status: 'Sent', cost: '30$', title: 'Some Title 2', date: '2023-07-20' },
         { status: 'Received', cost: '10$', title: 'Some Title 3', date: '2023-07-22' },
     ]);
+
+    useEffect(() => {
+        const profit = reports.reduce((total, report) => {
+            if (report.status === 'Received') {
+                return total + parseFloat(report.cost);
+            }
+            return total;
+        }, 0);
+
+        const loss = reports.reduce((total, report) => {
+            if (report.status === 'Sent') {
+                return total + parseFloat(report.cost);
+            }
+            return total;
+        }, 0);
+
+        setTotalProfit(profit);
+        setTotalLoss(loss);
+    }, [reports]);
+
 
     const [modalVisible, setModalVisible] = useState(false);
     const [newReport, setNewReport] = useState({ status: 'Received', cost: '', title: '', date: new Date() });
@@ -57,6 +78,14 @@ const HomeScreen = () => {
         <View style={styles.container1}>
             <Header title="Profit & Loss Report" onAddPressed={() => setModalVisible(!modalVisible)} />
             <View style={styles.container2}>
+                <View style={styles.summaryContainer}>
+                    <View style={styles.summaryBox}>
+                        <Text style={styles.summaryText}>Total Profit: ${totalProfit}</Text>
+                    </View>
+                    <View style={styles.summaryBox}>
+                        <Text style={styles.summaryText}>Total Loss: ${totalLoss}</Text>
+                    </View>
+                </View>
                 <FlatList
                     data={reports}
                     renderItem={({ item }) => <ReportItem item={item} />}
@@ -131,6 +160,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.background,
         borderRadius: 20,
+        paddingHorizontal: width * 0.05,
+        paddingTop: height * 0.02
     },
 
     modalContiner: {
@@ -145,6 +176,26 @@ const styles = StyleSheet.create({
         padding: 20,
         height: '50%',
         justifyContent: 'space-around',
+    },
+    summaryContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap'
+    },
+    summaryBox: {
+        padding: 10,
+        borderColor: colors.secondary,
+        borderRadius: 10,
+        width: '45%',
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20
+    },
+    summaryText: {
+        color: colors.text,
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     input: {
         color: colors.text,
