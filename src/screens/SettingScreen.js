@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Alert, TextInput } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Alert, Linking } from 'react-native';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import SettingItem from '../components/SettingItem';
@@ -115,16 +115,23 @@ const SettingScreen = ({ navigation }) => {
     };
 
     const privacyPolicies = () => {
+        Linking.openURL('https://www.freeprivacypolicy.com/live/d7dbcf8d-0d39-4f10-961c-db59632d5b1b');
         // Open privacy policies page
     };
 
     const termsAndConditions = () => {
-        // Open terms and conditions page
+        Linking.openURL('https://www.freeprivacypolicy.com/live/f6416c0b-a9c3-4602-b73e-20c63c9a8839');
     };
 
-    const contactOwner = () => {
-        // Open contact owner page
-    };
+    // const contactOwner = () => {
+    //     const email = 'warisallah923@gmail.com';
+    //     const gmailUrl = `mailto:${email}`;
+      
+    //     // Open Gmail
+    //     Linking.openURL(gmailUrl)
+    //       .catch((err) => console.error('An error occurred', err));
+    //   };
+      
 
     const rateUs = () => {
         // Open contact owner page
@@ -141,9 +148,9 @@ const SettingScreen = ({ navigation }) => {
                     :
                     <View style={styles.container2}>
                         <SettingItem title="Reset App" iconName="trash" onPress={clearData} />
-                        <SettingItem title="Rate Us" iconName="star" onPress={rateUs} />
+                        {/* <SettingItem title="Rate Us" iconName="star" onPress={rateUs} /> */}
                         <SettingItem title="Privacy Policies" iconName="shield" onPress={privacyPolicies} />
-                        <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} />
+                        {/* <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} /> */}
                         <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
                         <SettingItem title="Logout" iconName="sign-out" onPress={logout} />
                         <SettingItem title="Deactivate Account" iconName="user-times" onPress={deactivateAccount} />

@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: 'row',
         padding: 10,
-        backgroundColor: colors.primary
+        backgroundColor: colors.primary,
+        paddingTop: colors.height * 0.05
     },
     title: {
         fontSize: 20,
