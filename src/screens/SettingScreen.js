@@ -126,15 +126,23 @@ const SettingScreen = ({ navigation }) => {
     // const contactOwner = () => {
     //     const email = 'warisallah923@gmail.com';
     //     const gmailUrl = `mailto:${email}`;
-      
+
     //     // Open Gmail
     //     Linking.openURL(gmailUrl)
     //       .catch((err) => console.error('An error occurred', err));
     //   };
-      
+
 
     const rateUs = () => {
         // Open contact owner page
+    };
+
+    const viewQuotes = () => {
+        navigation.navigate(RouteName.QUOTE_SCREEN);
+    };
+
+    const openCalculator = () => {
+        navigation.navigate(RouteName.CALCULATOR);
     };
 
     return (
@@ -147,11 +155,13 @@ const SettingScreen = ({ navigation }) => {
                     </View>
                     :
                     <View style={styles.container2}>
+                        <SettingItem title="Business Quote of the Day" iconName="quote-left" onPress={viewQuotes} />
+                        <SettingItem title="Quick Calculator" iconName="calculator" onPress={openCalculator} />
+                        <SettingItem title="Privacy Policies" iconName="shield" onPress={privacyPolicies} />
+                        <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
                         <SettingItem title="Reset App" iconName="trash" onPress={clearData} />
                         {/* <SettingItem title="Rate Us" iconName="star" onPress={rateUs} /> */}
-                        <SettingItem title="Privacy Policies" iconName="shield" onPress={privacyPolicies} />
                         {/* <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} /> */}
-                        <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
                         <SettingItem title="Logout" iconName="sign-out" onPress={logout} />
                         <SettingItem title="Deactivate Account" iconName="user-times" onPress={deactivateAccount} />
                     </View>

@@ -3,12 +3,17 @@ import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-nativ
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import colors from '../utils/colors';
+import RouteName from '../routes/RouteName';
 
 const Header = ({ title, onAddPressed }) => {
     const navigation = useNavigation();
 
     const handlePress = () => {
         onAddPressed();
+    }
+
+    const handlePressCalculator = () => {
+        navigation.navigate(RouteName.CALCULATOR);
     }
 
     const getRightIcon = () => {
@@ -37,6 +42,12 @@ const Header = ({ title, onAddPressed }) => {
                     </TouchableOpacity>
                 )
             }
+            {rightIcon && title === 'Profit & Loss Report' &&
+                <TouchableOpacity onPress={handlePressCalculator}>
+                    <Icon name={"calculator"} size={30} color={styles.icon.color} />
+                </TouchableOpacity>
+            }
+
             <Text style={styles.title}>{title}</Text>
             {rightIcon &&
                 <TouchableOpacity onPress={handlePress}>

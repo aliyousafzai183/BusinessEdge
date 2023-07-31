@@ -57,7 +57,7 @@ function BottomTab() {
         component={SettingScreen}
         options={{
           headerShown: false,
-          tabBarLabel: 'Settings',
+          tabBarLabel: 'More',
           tabBarIcon: ({ color }) => (
             <FontAwesome name="gear" color={color} size={26} />
           ),
