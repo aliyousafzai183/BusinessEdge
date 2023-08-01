@@ -132,22 +132,22 @@ const HomeScreen = () => {
                 >
                     <Pressable
                         style={styles.modalContiner}
-                        onPress={() => { setModalVisible(false) }}
+                        // onPress={() => { setModalVisible(false) }}
                     >
                         <View style={styles.modalView}>
                             <Picker
                                 selectedValue={newReport.status}
                                 onValueChange={(itemValue, itemIndex) => setNewReport({ ...newReport, status: itemValue })}
                             >
-                                <Picker.Item label="Received" value="Received" />
-                                <Picker.Item label="Sent" value="Sent" />
+                                <Picker.Item label="Received" value="Received" color={colors.text} />
+                                <Picker.Item label="Sent" value="Sent" color={colors.text} />
                             </Picker>
-                            {Platform.OS === 'ios' && <DateTimePicker
+                            {/* {Platform.OS === 'ios' && <DateTimePicker
                                 value={newReport.date}
                                 mode={'date'}
                                 display="default"
                                 onChange={(event, selectedDate) => setNewReport({ ...newReport, date: selectedDate })}
-                            />}
+                            />} */}
                             <Input
                                 ref={costRef}
                                 leftIcon={<Icon name="dollar" size={24} color={colors.dimWhite} />}

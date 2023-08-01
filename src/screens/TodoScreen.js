@@ -61,7 +61,7 @@ const TodoScreen = () => {
                 >
                     <Pressable
                         style={styles.modalContainer}
-                        onPress={() => { setModalVisible(false) }}
+                        // onPress={() => { setModalVisible(false) }}
                     >
                         <View style={styles.modalView}>
                             <Input

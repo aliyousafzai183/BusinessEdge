@@ -3,7 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   SplashScreen, LoginScreen,
-  SignupScreen, ForgotPasswordScreen, UserName
+  SignupScreen, ForgotPasswordScreen, UserName,
+  QuotesScreen, QuickCalculator
 } from '../screens/index';
 import BottomTab from './BottomTab';
 import RouteName from './RouteName';
@@ -49,6 +50,28 @@ function RootNavigator() {
           component={ForgotPasswordScreen}
           options={{
               headerTitle: 'Reset Password',
+              headerStyle:{
+                backgroundColor: colors.background
+              },
+              headerTintColor: colors.text
+          }}
+        />
+        <Stack.Screen
+          name={RouteName.QUOTE_SCREEN}
+          component={QuotesScreen}
+          options={{
+              headerTitle: 'Business Quote of the Day',
+              headerStyle:{
+                backgroundColor: colors.background
+              },
+              headerTintColor: colors.text
+          }}
+        />
+        <Stack.Screen
+          name={RouteName.CALCULATOR}
+          component={QuickCalculator}
+          options={{
+              headerTitle: 'Quick Calculator',
               headerStyle:{
                 backgroundColor: colors.background
               },

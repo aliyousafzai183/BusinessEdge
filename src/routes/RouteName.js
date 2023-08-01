@@ -9,6 +9,8 @@ const RouteName = {
     SPLASH_SCREEN: 'SPLASH_SCREEN',
     BOTTOM_TAB: 'BOTTOM_TAB',
     USER_NAME: 'USER_NAME',
+    QUOTE_SCREEN: 'QUOTE_SCREEN',
+    CALCULATOR: 'CALCULATOR',
 }
 
 export default RouteName;

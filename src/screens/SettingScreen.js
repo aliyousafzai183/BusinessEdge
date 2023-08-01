@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Alert, TextInput } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Alert, Linking } from 'react-native';
 import colors from '../utils/colors';
 import Header from '../components/Header';
 import SettingItem from '../components/SettingItem';
@@ -115,24 +115,41 @@ const SettingScreen = ({ navigation }) => {
     };
 
     const privacyPolicies = () => {
+        Linking.openURL('https://www.freeprivacypolicy.com/live/d7dbcf8d-0d39-4f10-961c-db59632d5b1b');
         // Open privacy policies page
     };
 
     const termsAndConditions = () => {
-        // Open terms and conditions page
+        Linking.openURL('https://www.freeprivacypolicy.com/live/f6416c0b-a9c3-4602-b73e-20c63c9a8839');
     };
 
-    const contactOwner = () => {
-        // Open contact owner page
-    };
+    // const contactOwner = () => {
+    //     const email = 'warisallah923@gmail.com';
+    //     const gmailUrl = `mailto:${email}`;
+
+    //     // Open Gmail
+    //     Linking.openURL(gmailUrl)
+    //       .catch((err) => console.error('An error occurred', err));
+    //   };
+
 
     const rateUs = () => {
         // Open contact owner page
     };
 
+<<<<<<< HEAD
     const onAddPressed = () => {
 
     }
+=======
+    const viewQuotes = () => {
+        navigation.navigate(RouteName.QUOTE_SCREEN);
+    };
+
+    const openCalculator = () => {
+        navigation.navigate(RouteName.CALCULATOR);
+    };
+>>>>>>> f7dd5a0c5a68a431a23af2afe9ae1b1be6bf7233
 
     return (
         <View style={styles.container1}>
@@ -144,11 +161,13 @@ const SettingScreen = ({ navigation }) => {
                     </View>
                     :
                     <View style={styles.container2}>
-                        <SettingItem title="Reset App" iconName="trash" onPress={clearData} />
-                        <SettingItem title="Rate Us" iconName="star" onPress={rateUs} />
+                        <SettingItem title="Business Quote of the Day" iconName="quote-left" onPress={viewQuotes} />
+                        <SettingItem title="Quick Calculator" iconName="calculator" onPress={openCalculator} />
                         <SettingItem title="Privacy Policies" iconName="shield" onPress={privacyPolicies} />
-                        <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} />
                         <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
+                        <SettingItem title="Reset App" iconName="trash" onPress={clearData} />
+                        {/* <SettingItem title="Rate Us" iconName="star" onPress={rateUs} /> */}
+                        {/* <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} /> */}
                         <SettingItem title="Logout" iconName="sign-out" onPress={logout} />
                         <SettingItem title="Delete Account Permanently" iconName="user-times" onPress={deactivateAccount} />
                     </View>
