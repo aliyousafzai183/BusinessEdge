@@ -88,7 +88,7 @@ const SettingScreen = ({ navigation }) => {
                     style: "cancel"
                 },
                 {
-                    text: "Deactivate",
+                    text: "Delete Account",
                     onPress: async () => {
                         setLoading(true);
                         try {
@@ -136,12 +136,9 @@ const SettingScreen = ({ navigation }) => {
     const rateUs = () => {
         // Open contact owner page
     };
-
-<<<<<<< HEAD
     const onAddPressed = () => {
 
     }
-=======
     const viewQuotes = () => {
         navigation.navigate(RouteName.QUOTE_SCREEN);
     };
@@ -149,7 +146,6 @@ const SettingScreen = ({ navigation }) => {
     const openCalculator = () => {
         navigation.navigate(RouteName.CALCULATOR);
     };
->>>>>>> f7dd5a0c5a68a431a23af2afe9ae1b1be6bf7233
 
     return (
         <View style={styles.container1}>
