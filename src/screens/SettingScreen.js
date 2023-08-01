@@ -80,8 +80,8 @@ const SettingScreen = ({ navigation }) => {
 
     const deactivateAccount = async () => {
         Alert.alert(
-            "Deactivate Account ?",
-            "Are you sure that you want to deactivate your account.",
+            "Delete Account Permanently?",
+            "Are you sure that you want to delete your account and all data related to your account?",
             [
                 {
                     text: "Cancel",
@@ -130,9 +130,13 @@ const SettingScreen = ({ navigation }) => {
         // Open contact owner page
     };
 
+    const onAddPressed = () => {
+
+    }
+
     return (
         <View style={styles.container1}>
-            <Header title="Settings" />
+            <Header title="Settings" onAddPressed={onAddPressed}/>
             {
                 loading ?
                     <View style={styles.container2}>
@@ -146,7 +150,7 @@ const SettingScreen = ({ navigation }) => {
                         <SettingItem title="Contact Owner" iconName="envelope" onPress={contactOwner} />
                         <SettingItem title="Terms and Conditions" iconName="file-text" onPress={termsAndConditions} />
                         <SettingItem title="Logout" iconName="sign-out" onPress={logout} />
-                        <SettingItem title="Deactivate Account" iconName="user-times" onPress={deactivateAccount} />
+                        <SettingItem title="Delete Account Permanently" iconName="user-times" onPress={deactivateAccount} />
                     </View>
             }
         </View>
